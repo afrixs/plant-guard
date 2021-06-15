@@ -1,6 +1,6 @@
 # plant-guard
 
-[![plant-guard](https://www.youtube.com/watch?v=Qz8NVYgdUNE/0.jpg)](https://www.youtube.com/watch?v=Qz8NVYgdUNE "Plant guard")
+[![video](http://img.youtube.com/vi/Qz8NVYgdUNE/0.jpg)](https://www.youtube.com/watch?v=Qz8NVYgdUNE "Plant guard")
 
 A simple plant watering machine.
 Used parts:
