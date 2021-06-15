@@ -8,7 +8,7 @@ Used parts:
   - Stepper motor 28BYJ-48 with driver
   - Silicon hose
   - Bucket
-  - 3d-printed parts (see `models`, Note: it's suggested to create your own models to fit your bucket and hose + there are errors in the models present which needed to be manually corrected (sawing and bending was easier for me than toiling with FreeCAD which terrible when changing parameters etc.))
+  - 3d-printed parts (see `models`, Note: it's suggested to create your own models to fit your bucket and hose + there are errors in the models present which needed to be manually corrected (sawing and bending was easier for me than toiling with FreeCAD which is terrible when changing parameters etc.))
   - dupont cables, screws, ...
 
 No sensors are used for now, you will need to set appropriate timing for the frequency and duration of the watering (Keep in mind the watering will be slower when the bucket is emptier).
