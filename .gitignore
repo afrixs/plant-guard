@@ -1,0 +1,7 @@
+__pycache__
+*.3mf
+*.stl
+*.FCStd1
+*.gcode
+jobs.yaml
+save*.txt
