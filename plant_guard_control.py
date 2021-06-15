@@ -218,3 +218,4 @@ if __name__ == '__main__':
       print('stopping.')
     setKeyboardListening(False)
     # listener.join()
+    cleanup()

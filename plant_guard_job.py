@@ -21,4 +21,5 @@ if __name__ == '__main__':
       exit(1)
     print("watering from "+str(angleFrom)+" to "+str(angleTo)+" dur "+str(pumpDuration))
     water(angleFrom, angleTo, pumpDuration)
+    cleanup()
     

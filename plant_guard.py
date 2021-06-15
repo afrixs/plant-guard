@@ -17,6 +17,9 @@ def init(exitOnLoadFailure):
   initPump()
   initStepper(exitOnLoadFailure)
 
+def cleanup():
+  GPIO.cleanup()
+
 def initPump():
   GPIO.setup(PUMP_PIN, GPIO.OUT)
   GPIO.output(PUMP_PIN, GPIO.LOW)
