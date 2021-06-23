@@ -56,7 +56,7 @@ def on_press(k):
     with open(str(Path.home())+'/plant-guard/jobs.yaml', 'w') as file:
       yaml.dump(jobsData, file)
     
-    print("Enter schedule\nminute hour day_of_month month day_of_week\nexample (every friday at 6AM and 6PM): * 6,18 * * Fri)")
+    print("Enter schedule\nminute hour day_of_month month day_of_week\nexample (every friday at 6AM and 6PM): 0 6,18 * * Fri)")
     schedule = input()
     while not CronSlices.is_valid(schedule):
       print("Invalid schedule")

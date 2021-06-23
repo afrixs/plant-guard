@@ -108,16 +108,22 @@ def rotateSteps(stepsCnt):
 
 def rotateTo(angle):
   global currentAngle
+
+  while angle >= fullRot:
+    angle -= fullRot
+  while angle < 0:
+    angle += fullRot
+  
   with lock:
     stepsCnt = angle - currentAngle
-  while stepsCnt > fullRot/2:
+  while stepsCnt > fullRot/2: # 'if' should be good enough...
     stepsCnt -= fullRot
-  while stepsCnt < -fullRot/2:
+  while stepsCnt < -fullRot/2: # 'if' should be good enough...
     stepsCnt += fullRot
   #don't rotate through 360 degrees because of hose and (future) cables
-  if currentAngle > 0 and angle < 0 and stepsCnt > 0:
+  if currentAngle <= fullRot/2 and angle > fullRot/2 and stepsCnt > 0:
     stepsCnt -= fullRot
-  elif currentAngle < 0 and angle > 0 and stepsCnt < 0:
+  elif currentAngle > fullRot/2 and angle <= fullRot/2 and stepsCnt < 0:
     stepsCnt += fullRot
   
   rotateSteps(stepsCnt)
