@@ -30,10 +30,13 @@ Usage:
   12. Use 'q' or 'Esc' key to quit the job configuration client. Lock for controlling motors is released and scheduled jobs are free to run
   13. You can now use Ctrl+D to logout from ssh
 
-Note: you may edit the jobs afterwards using `crontab -e` or `nano ~/plant-guard/jobs.yaml`.
-Important note: don't turn the stepper motor manually after the first start or the configuration will be broken. If you need (or accidentally happen) to turn it, use `rm ~/plant-guard/save.txt; rm ~/plant-guard/save_backup.txt` and follow steps 4. - 12. to reconfigure (or turn the motor back to its original position, hoping the difference will not be critical).
+Note: You may edit the jobs afterwards using `crontab -e` or `nano ~/plant-guard/jobs.yaml`.
 
-First test was successful: here are images of our plants before and after leaving the apartment for 9 days. I think they liked it
+Important note: Don't turn the stepper motor manually after the first start or the configuration will be broken. If you need (or accidentally happen) to turn it, use `rm ~/plant-guard/save.txt; rm ~/plant-guard/save_backup.txt` and follow steps 4. - 12. to reconfigure (or turn the motor back to its original position, hoping the difference will not be critical).
+
+Important note: Also when leaving the device to operate without your attendance for a longer time, prepare the place in a way that no firm or big leaves capable of blocking the movement of the arm will grow in its way.
+
+First test was successful: Here are images of our plants before and after leaving the apartment for 9 days. I think they liked it
 
 ![t = 0](docs/photo_t_0days.jpg)
 ![t = 9 days](docs/photo_t_8days.jpg)
