@@ -1,6 +1,6 @@
 # plant-guard
 
-[![video](http://img.youtube.com/vi/Qz8NVYgdUNE/0.jpg)](https://www.youtube.com/watch?v=Qz8NVYgdUNE "Plant guard")
+[![Click to watch](https://img.youtube.com/vi/59vS7RXK-lc/0.jpg)](https://www.youtube.com/watch?v=59vS7RXK-lc "Click to watch")
 
 A simple plant watering machine.
 Used parts:
@@ -31,4 +31,9 @@ Usage:
   13. You can now use Ctrl+D to logout from ssh
 
 Note: you may edit the jobs afterwards using `crontab -e` or `nano ~/plant-guard/jobs.yaml`.
-Important note: don't twist the stepper motor manually after the first start or the configuration will be broken. If you need (or accidentally happen) to twist it, use `rm ~/plant-guard/save.txt; rm ~/plant-guard/save_backup.txt` and follow steps 4. - 12. to reconfigure
+Important note: don't turn the stepper motor manually after the first start or the configuration will be broken. If you need (or accidentally happen) to turn it, use `rm ~/plant-guard/save.txt; rm ~/plant-guard/save_backup.txt` and follow steps 4. - 12. to reconfigure (or turn the motor back to its original position, hoping the difference will not be critical).
+
+First test was successful: here are images of our plants before and after leaving the apartment for 8 days
+![t = 0](https://github.com/afrixs/plant-guard/blob/master/docs/photo_t_0days.jpg?raw=true)
+![t = 8 days](https://github.com/afrixs/plant-guard/blob/master/docs/photo_t_8days.jpg?raw=true)
+
