@@ -10,7 +10,7 @@ Used parts:
   - Stepper motor 28BYJ-48 with driver
   - Silicon hose
   - Bucket
-  - 3d-printed parts (see `models`, Note: it's suggested to create your own models to fit your bucket and hose + there are errors in the models present which needed to be manually corrected (sawing and bending was easier for me than toiling with FreeCAD which is terrible when changing parameters etc.))
+  - [3d-printed parts](models)
   - dupont cables, screws, ...
 
 No sensors are used for now, you will need to set appropriate timing for the frequency and duration of the watering (Keep in mind the watering will be slower when the bucket is emptier).
@@ -31,9 +31,9 @@ Usage:
   13. You can now use Ctrl+D to logout from ssh
 
 Note: you may edit the jobs afterwards using `crontab -e` or `nano ~/plant-guard/jobs.yaml`.
-Important note: don't turn the stepper motor manually after the first start or the configuration will be broken. If you need (or accidentally happen) to turn it, use `rm ~/plant-guard/save.txt; rm ~/plant-guard/save_backup.txt` and follow steps 4. - 12. to reconfigure (or turn the motor back to its original position, hoping the difference will not be critical).
+Important note: don't turn the stepper motor manually after the first start or the configuration will be broken. If you need (or accidentally happen) to turn it, use `rm ~/plant-guard/save.txt; rm ~/plant-guard/save_backup.txt` and follow steps 5. - 12. to reconfigure (or turn the motor back to its original position, hoping the difference will not be critical).
 
 First test was successful: here are images of our plants before and after leaving the apartment for 8 days
-![t = 0](https://github.com/afrixs/plant-guard/blob/master/docs/photo_t_0days.jpg?raw=true)
-![t = 8 days](https://github.com/afrixs/plant-guard/blob/master/docs/photo_t_8days.jpg?raw=true)
+![t = 0](docs/photo_t_0days.jpg)
+![t = 8 days](docs/photo_t_8days.jpg)
 

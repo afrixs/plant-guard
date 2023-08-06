@@ -1,6 +1,9 @@
 __pycache__
-*.3mf
 *.FCStd1
 *.gcode
 jobs.yaml
 save*.txt
+build/
+install/
+log/
+.idea/
