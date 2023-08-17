@@ -7,3 +7,4 @@ build/
 install/
 log/
 .idea/
+/compile_commands.json
