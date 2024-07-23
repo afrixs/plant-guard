@@ -1,0 +1,13 @@
+uint32 ADD=0
+uint32 MODIFY=1
+uint32 ADD_OR_MODIFY=2
+uint32 DELETE=3
+
+uint32 command
+Job job
+string name_before_renaming  # only used when renaming a job
+
+---
+
+bool success
+string message

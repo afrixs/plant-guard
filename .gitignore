@@ -3,6 +3,7 @@ __pycache__
 *.gcode
 jobs.yaml
 save*.txt
+tips.txt
 build/
 install/
 log/

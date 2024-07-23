@@ -1,7 +1,6 @@
 from setuptools import find_packages, setup
-from glob import glob
 
-package_name = 'plantguard_bringup'
+package_name = 'pg_pump_crane'
 
 setup(
     name=package_name,
@@ -11,7 +10,6 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', glob('launch/*launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -22,6 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'pump_crane_control = pg_pump_crane.pump_crane_control:main',
+            'pump_crane_job_client = pg_pump_crane.pump_crane_job_client:main'
         ],
     },
 )

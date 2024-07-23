@@ -1,0 +1,14 @@
+# request
+Job job
+---
+# result
+float64 final_angle
+---
+# feedback
+int32 STAGE_QUEUED=0
+int32 STAGE_APPROACHING=1
+int32 STAGE_WATERING=2
+float64 total_duration
+float64 stage_duration
+float64 stage_elapsed
+int32 stage

@@ -1,0 +1,7 @@
+# request
+string device
+string name
+---
+# response
+string error_message
+Job[] jobs

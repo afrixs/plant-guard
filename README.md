@@ -1,4 +1,4 @@
-# plant-guard
+# Plant guard
 
 [![Click to watch](https://img.youtube.com/vi/59vS7RXK-lc/0.jpg)](https://www.youtube.com/watch?v=59vS7RXK-lc "Click to watch")
 
@@ -21,7 +21,7 @@ Usage:
   3. `git clone https://github.com/afrixs/plant-guard.git`
   4. `pip3 install python_crontab pyyaml portalocker`
   5. Set the arm to point directly outwards from the bucket
-  6. `python3 plant-guard/plant_guard_control.py`
+  6. `python3 plant-guard/pg_ws/src/pg_pump_crane/pg_pump_crane/pump_crane_keyboard.py`
   7. Use arrow keys to move the arm. Repeat the last arrow key stroke to stop. When the arm is above the plant being configured use 'f' key to set `angle_from`. Optionally move the arm a little bit and use 't' key to set `angle_to`. The arm will be moving between `angle_from` and `angle_to` during the watering so that water does not fall to a single spot only.
   8. Use 'p' key to start/stop the pump. Duration of pumping will be stored to `pump_dur`.
   9. Use 'Enter' key to create a watering job. Enter a name for the job and a crontab time entry
@@ -30,9 +30,9 @@ Usage:
   12. Use 'q' or 'Esc' key to quit the job configuration client. Lock for controlling motors is released and scheduled jobs are free to run
   13. You can now use Ctrl+D to logout from ssh
 
-Note: You may edit the jobs afterwards using `crontab -e` or `nano ~/plant-guard/jobs.yaml`.
+Note: You may edit the jobs afterwards using `crontab -e` or `nano ~/plant_guard/jobs.yaml`.
 
-Important note: don't turn the stepper motor manually after the first start or the configuration will be broken. If you need (or accidentally happen) to turn it, use `rm ~/plant-guard/save.txt; rm ~/plant-guard/save_backup.txt` and follow steps 5. - 12. to reconfigure (or turn the motor back to its original position, hoping the difference will not be critical).
+Important note: don't turn the stepper motor manually after the first start or the configuration will be broken. If you need (or accidentally happen) to turn it, use `rm ~/plant_guard/save.txt; rm ~/plant_guard/save_backup.txt` and follow steps 5. - 12. to reconfigure (or turn the motor back to its original position, hoping the difference will not be critical).
 
 Important note: Also when leaving the device to operate without your attendance for a longer time, prepare the place in a way that no firm or big leaves capable of blocking the movement of the arm will grow in its way.
 
@@ -40,3 +40,5 @@ First test was successful: Here are images of our plants before and after leavin
 
 ![t = 0](docs/photo_t_0days.jpg)
 ![t = 9 days](docs/photo_t_8days.jpg)
+
+Note: `docker-*.bash` must be run with `sudo`
