@@ -28,8 +28,22 @@ def generate_launch_description():
         ),
 
         ExecuteProcess(
-            cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-d', '0', '-a',
-                 '^rt/image_raw/h264$|^rt/pump_crane/angle$|^rt/pump_crane/movement_dir$|^rt/pump_crane/pump$'],
+            # cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-d', '0', '-a',
+            #      '^rt/image_stream/h264$|^rt/pump_crane/angle$|^rt/pump_crane/angle_cmd$|^rt/pump_crane/movement_dir_cmd$|^rt/pump_crane/pump$|^rt/pump_crane/pump_cmd$|'
+            #      '^rq/control_playbackRequest$|^rr/control_playbackReply$|^rq/edit_bagRequest$|^rr/edit_bagReply$|^rq/edit_jobRequest$|^rr/edit_jobReply$|'
+            #      '^rq/enable_livestreamRequest$|^rr/enable_livestreamReply$|^rq/get_bag_listRequest$|^rr/get_bag_listReply$|^rq/get_job_listRequest$|^rr/get_job_listReply$'],  # zenoh 0.7.2, LAN/localhost
+            # cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-m', 'client', '-e', 'tcp/archeryarena.org:7447', '-d', '0', '-a',
+            #      '^rt/image_stream/h264$|^rt/pump_crane/angle$|^rt/pump_crane/angle_cmd$|^rt/pump_crane/movement_dir_cmd$|^rt/pump_crane/pump$|^rt/pump_crane/pump_cmd$|'
+            #      '^rq/control_playbackRequest$|^rr/control_playbackReply$|^rq/edit_bagRequest$|^rr/edit_bagReply$|^rq/edit_jobRequest$|^rr/edit_jobReply$|'
+            #      '^rq/enable_livestreamRequest$|^rr/enable_livestreamReply$|^rq/get_bag_listRequest$|^rr/get_bag_listReply$|^rq/get_job_listRequest$|^rr/get_job_listReply$'],  # zenoh 0.7.2, internet
+            # cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-d', '0', '-a',
+            #      'rt/image_stream/h264|rt/pump_crane/angle|rt/pump_crane/angle_cmd|rt/pump_crane/movement_dir_cmd|rt/pump_crane/pump|rt/pump_crane/pump_cmd|'
+            #      'rq/control_playbackRequest|rr/control_playbackReply|rq/edit_bagRequest|rr/edit_bagReply|rq/edit_jobRequest|rr/edit_jobReply|'
+            #      'rq/enable_livestreamRequest|rr/enable_livestreamReply|rq/get_bag_listRequest|rr/get_bag_listReply|rq/get_job_listRequest|rr/get_job_listReply'],  # zenoh 0.5.0, LAN/localhost
+            cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-m', 'client', '-e', 'tcp/archeryarena.org:7447', '-d', '0', '-a',
+                 'rt/image_stream/h264|rt/pump_crane/angle|rt/pump_crane/angle_cmd|rt/pump_crane/movement_dir_cmd|rt/pump_crane/pump|rt/pump_crane/pump_cmd|'
+                 'rq/control_playbackRequest|rr/control_playbackReply|rq/edit_bagRequest|rr/edit_bagReply|rq/edit_jobRequest|rr/edit_jobReply|'
+                 'rq/enable_livestreamRequest|rr/enable_livestreamReply|rq/get_bag_listRequest|rr/get_bag_listReply|rq/get_job_listRequest|rr/get_job_listReply'],  # zenoh 0.5.0, internet
             output='screen',
         ),
     ])
