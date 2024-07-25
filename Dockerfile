@@ -43,7 +43,8 @@ RUN touch src/bagtube/bagtube_rviz_plugins/COLCON_IGNORE
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && colcon build --symlink-install
+    && MAKEFLAGS=-j1 colcon build --symlink-install --parallel-workers 1
+    # && colcon build --symlink-install  # can be used instead in case the RPi has proper cooling maybe...
 
 RUN mkdir -p /root/plant_guard
 
