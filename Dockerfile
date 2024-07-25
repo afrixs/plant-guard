@@ -30,9 +30,11 @@ RUN mkdir -p /pg_ws/
 WORKDIR /pg_ws/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash
 COPY pg_ws/src src
-RUN pwd
-RUN ls
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+RUN touch src/mocked_rpi/COLCON_IGNORE
+RUN touch src/pg_rviz_plugins/COLCON_IGNORE
+RUN touch src/bagtube/bagtube_rviz_plugins/COLCON_IGNORE
 
 #RUN source /dds_ws/install/setup.bash \
 # && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
@@ -41,7 +43,7 @@ ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && colcon build --symlink-install --packages-ignore mocked_rpi bagtube_rviz_plugins pg_rviz_plugins
+    && colcon build --symlink-install
 
 RUN mkdir -p /root/plant_guard
 
