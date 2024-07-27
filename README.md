@@ -45,3 +45,5 @@ sudo raspi-config -> System Options -> Boot / Auto Login -> Console Autologin
 sudo nano /etc/dphys-swapfile -> CONF_SWAPSIZE=2048
 sudo reboot
 Note: `docker-*.bash` must be run with `sudo`
+
+sudo crontab -e -> @reboot /usr/bin/python3 /home/pi/plant-guard/docker-run.bash 1>>/root/plant_guard_control_out.log 2>>/root/plant_guard_control_err.log

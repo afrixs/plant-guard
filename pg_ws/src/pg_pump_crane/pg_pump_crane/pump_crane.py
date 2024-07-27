@@ -21,6 +21,7 @@ class PumpCrane:
   fullRot = 512*8
 
   stepperSleepDur = 0.005
+  hardwareInitialized = False
 
   def __init__(self, exitOnLoadFailure, stepperPosCallback=lambda pos: None, pumpCallback=lambda pumping: None):
     self.stepperPosCallback = stepperPosCallback
@@ -40,8 +41,10 @@ class PumpCrane:
     GPIO.setmode(GPIO.BCM)
     self.initPump()
     self.initStepper()
+    self.hardwareInitialized = True
 
   def cleanupHW(self):
+    self.hardwareInitialized = False
     GPIO.cleanup()
 
   def initPump(self):
@@ -52,11 +55,15 @@ class PumpCrane:
     pass
 
   def startPump(self):
+    if not self.hardwareInitialized:
+      print("startPump ERROR: Hardware not initialized")
+      return
     GPIO.output(self.PUMP_PIN, GPIO.HIGH)
     self.pumpCallback(True)
 
   def stopPump(self):
-    GPIO.output(self.PUMP_PIN, GPIO.LOW)
+    if self.hardwareInitialized:
+      GPIO.output(self.PUMP_PIN, GPIO.LOW)
     self.pumpCallback(False)
 
   def computeChecksum(self):
@@ -87,17 +94,21 @@ class PumpCrane:
     self.updateStepper()
 
   def updateStepper(self):
-    self.writeSavedData(False)
-    self.writeSavedData(True)
-    self.stepperPosCallback(self.getCurrentAngle())
-    for (p, v) in zip(self.STEPPER_PINS, self.STEPS[self.currentStep]):
-      GPIO.output(p, GPIO.HIGH if v == 1 else GPIO.LOW)
+    if self.hardwareInitialized:
+      self.writeSavedData(False)
+      self.writeSavedData(True)
+      self.stepperPosCallback(self.getCurrentAngle())
+      for (p, v) in zip(self.STEPPER_PINS, self.STEPS[self.currentStep]):
+        GPIO.output(p, GPIO.HIGH if v == 1 else GPIO.LOW)
 
   def degAngle(self, deg):
     return round(deg*512.0/45.0)
 
   def rotateSteps(self, stepsCnt):
     with self.lock:
+      if not self.hardwareInitialized:
+        print("rotateSteps ERROR: Hardware not initialized")
+        return
       for _ in range(abs(stepsCnt)):
         if stepsCnt > 0:
           self.currentStep = (self.currentStep+1)%len(self.STEPS)
@@ -190,6 +201,9 @@ class PumpCrane:
     while self.keyboardListening:
       if self.movementDir != 0:
         with self.lock:
+          if not self.hardwareInitialized:
+            print("rotateIfKey ERROR: Hardware not initialized")
+            return
           if self.movementDir > 0:
             self.currentStep = (self.currentStep+1)%len(self.STEPS)
             self.currentAngle = (self.currentAngle+1)%self.fullRot
