@@ -41,4 +41,7 @@ First test was successful: Here are images of our plants before and after leavin
 ![t = 0](docs/photo_t_0days.jpg)
 ![t = 9 days](docs/photo_t_8days.jpg)
 
+sudo raspi-config -> System Options -> Boot / Auto Login -> Console Autologin
+sudo nano /etc/dphys-swapfile -> CONF_SWAPSIZE=2048
+sudo reboot
 Note: `docker-*.bash` must be run with `sudo`

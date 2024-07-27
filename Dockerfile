@@ -22,7 +22,7 @@ RUN apt-get install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-ze
 # python3-portalocker not working with rosdep :/
 RUN apt-get install -y python3-pip \
     && python3 -m pip install --upgrade pip \
-    && python3 -m pip install portalocker python-crontab
+    && python3 -m pip install portalocker
 
 FROM base as app
 # Create Colcon workspace with external dependencies
@@ -46,7 +46,16 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && MAKEFLAGS=-j1 colcon build --symlink-install --parallel-workers 1
     # && colcon build --symlink-install  # can be used instead in case the RPi has proper cooling maybe...
 
-RUN mkdir -p /root/plant_guard
+RUN pip3 install python-crontab RPi.GPIO
+RUN echo 'alias r2pg="source /pg_ws/install/setup.bash"' >> ~/.bashrc
+# zenoh 0.7.2
+#RUN echo "export CYCLONEDDS_URI='<CycloneDDS><Domain><General><Interfaces><NetworkInterface name="lo"/></Interfaces><AllowMulticast>true</AllowMulticast></General><Discovery><ParticipantIndex>none</ParticipantIndex></Discovery></Domain></CycloneDDS>' >> ~/.bashrc
+# zenoh 0.5.0
+RUN echo "export CYCLONEDDS_URI='<CycloneDDS><Domain><General><NetworkInterfaceAddress>127.0.0.1</NetworkInterfaceAddress><AllowMulticast>true</AllowMulticast></General><Discovery><ParticipantIndex>none</ParticipantIndex></Discovery></Domain></CycloneDDS>'" >> ~/.bashrc
+RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
+RUN echo "export ROS_DOMAIN_ID=23" >> ~/.bashrc
+
+RUN systemctl enable cron
 
 EXPOSE 7446/udp
 EXPOSE 7447/tcp
