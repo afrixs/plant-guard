@@ -26,6 +26,7 @@ class PumpCraneControl(Node):
 
     self.pump_crane = PumpCrane(False, stepperPosCallback=lambda pos: self.stepper_pos_callback(pos), pumpCallback=lambda pumping: self.pump_callback(pumping))
     self.pump_crane.setKeyboardListening(True)
+    self.pump_crane.cleanupHW()
 
     self.movement_dir_sub = self.create_subscription(Int32, 'movement_dir_cmd', self.movement_dir_cmd_callback, 1)
     self.pump_sub = self.create_subscription(Bool, 'pump_cmd', self.pump_cmd_callback, 1)
@@ -71,12 +72,14 @@ class PumpCraneControl(Node):
       self.pump_crane.stopPump()
       self.last_pump_time = None
       if self.last_movement_time is None:
+        self.pump_crane.cleanupHW()
         self.pump_crane_lock.release()
     if self.last_movement_time is not None and self.get_clock().now() - self.last_movement_time > Duration(seconds=0.5):
       self.get_logger().warn("Connection lost, stopping movement")
       self.pump_crane.setMovementDir(0)
       self.last_movement_time = None
       if self.last_pump_time is None:
+        self.pump_crane.cleanupHW()
         self.pump_crane_lock.release()
 
   def movement_dir_cmd_callback(self, msg: Int32):
@@ -84,8 +87,10 @@ class PumpCraneControl(Node):
     self.last_movement_time = self.get_clock().now() if msg.data != 0 else None
     if self.last_movement_time is not None and not was_moving and self.last_pump_time is None:
       self.pump_crane_lock.acquire()
+      self.pump_crane.initHW()
     self.pump_crane.setMovementDir(msg.data)
     if self.last_movement_time is None and was_moving and self.last_pump_time is None:
+      self.pump_crane.cleanupHW()
       self.pump_crane_lock.release()
 
   def pump_cmd_callback(self, msg: Bool):
@@ -94,11 +99,13 @@ class PumpCraneControl(Node):
       self.last_pump_time = self.get_clock().now()
       if not was_pumping and self.last_movement_time is None:
         self.pump_crane_lock.acquire()
+        self.pump_crane.initHW()
       self.pump_crane.startPump()
     else:
       self.pump_crane.stopPump()
       self.last_pump_time = None
       if was_pumping and self.last_movement_time is None:
+        self.pump_crane.cleanupHW()
         self.pump_crane_lock.release()
 
   def perform_job_goal_callback(self, goal: PerformJob.Goal):
@@ -131,6 +138,7 @@ class PumpCraneControl(Node):
     if rclpy.ok() and not goal_handle.is_cancel_requested:
       self.get_logger().info(f"Executing PerformJob goal {goal_handle.goal_id}...")
       self.pump_crane_lock.acquire()
+      self.pump_crane.initHW()
 
       with self.current_job_goal_handle_lock:
         self.current_job_goal_handle = goal_handle
@@ -156,6 +164,7 @@ class PumpCraneControl(Node):
 
       with self.current_job_goal_handle_lock:
         self.current_job_goal_handle = None
+      self.pump_crane.cleanupHW()
       self.pump_crane_lock.release()
 
     with self.jobs_queue_condition:

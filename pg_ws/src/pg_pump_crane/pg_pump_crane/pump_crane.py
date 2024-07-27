@@ -25,11 +25,23 @@ class PumpCrane:
   def __init__(self, exitOnLoadFailure, stepperPosCallback=lambda pos: None, pumpCallback=lambda pumping: None):
     self.stepperPosCallback = stepperPosCallback
     self.pumpCallback = pumpCallback
-    GPIO.setmode(GPIO.BCM)
-    self.initPump()
-    self.initStepper(exitOnLoadFailure)
+    if not self.readSavedData(False) and not self.readSavedData(True):
+      if exitOnLoadFailure:
+        print("ERROR: No saved state file found")
+        exit(-1)
+      else:
+        print("WARNING: No saved state file found. This is ok if running for the first time")
+    self.initHW()
 
   def cleanup(self):
+    self.cleanupHW()
+
+  def initHW(self):
+    GPIO.setmode(GPIO.BCM)
+    self.initPump()
+    self.initStepper()
+
+  def cleanupHW(self):
     GPIO.cleanup()
 
   def initPump(self):
@@ -69,14 +81,7 @@ class PumpCrane:
     with open(self.saveFilePath(backup), 'w') as file:
       file.writelines([str(self.currentStep)+'\n', str(self.currentAngle)+'\n', str(self.computeChecksum())+'\n'])
 
-  def initStepper(self, exitOnLoadFailure):
-    if not self.readSavedData(False) and not self.readSavedData(True):
-      if exitOnLoadFailure:
-        print("ERROR: No saved state file found")
-        exit(-1)
-      else:
-        print("WARNING: No saved state file found. This is ok if running for the first time")
-
+  def initStepper(self):
     for p in self.STEPPER_PINS:
       GPIO.setup(p, GPIO.OUT)
     self.updateStepper()
