@@ -7,6 +7,7 @@ SHELL ["/bin/bash", "-c"]
 # Create Colcon workspace with external dependencies
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash
 RUN apt-get update -y
+RUN apt-get upgrade -y
 RUN apt-get install -y iproute2
 
 #RUN mkdir -p /dds_ws/

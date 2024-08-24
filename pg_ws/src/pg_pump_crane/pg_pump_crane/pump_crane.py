@@ -38,14 +38,16 @@ class PumpCrane:
     self.cleanupHW()
 
   def initHW(self):
-    GPIO.setmode(GPIO.BCM)
-    self.initPump()
-    self.initStepper()
-    self.hardwareInitialized = True
+    with self.lock:
+      GPIO.setmode(GPIO.BCM)
+      self.initPump()
+      self.initStepper()
+      self.hardwareInitialized = True
 
   def cleanupHW(self):
-    self.hardwareInitialized = False
-    GPIO.cleanup()
+    with self.lock:
+      self.hardwareInitialized = False
+      GPIO.cleanup()
 
   def initPump(self):
     GPIO.setup(self.PUMP_PIN, GPIO.OUT)
@@ -55,15 +57,17 @@ class PumpCrane:
     pass
 
   def startPump(self):
-    if not self.hardwareInitialized:
-      print("startPump ERROR: Hardware not initialized")
-      return
-    GPIO.output(self.PUMP_PIN, GPIO.HIGH)
+    with self.lock:
+      if not self.hardwareInitialized:
+        print("startPump ERROR: Hardware not initialized")
+        return
+      GPIO.output(self.PUMP_PIN, GPIO.HIGH)
     self.pumpCallback(True)
 
   def stopPump(self):
-    if self.hardwareInitialized:
-      GPIO.output(self.PUMP_PIN, GPIO.LOW)
+    with self.lock:
+      if self.hardwareInitialized:
+        GPIO.output(self.PUMP_PIN, GPIO.LOW)
     self.pumpCallback(False)
 
   def computeChecksum(self):
