@@ -5,3 +5,6 @@
 [submodule "pg_ws/src/bagtube"]
 	path = pg_ws/src/bagtube
 	url = https://github.com/afrixs/bagtube.git
+[submodule "pg_ws/deps/libcamera"]
+	path = pg_ws/deps/libcamera
+	url = https://github.com/raspberrypi/libcamera.git

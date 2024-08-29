@@ -10,10 +10,18 @@ def generate_launch_description():
     return LaunchDescription([
         SetEnvironmentVariable('RCUTILS_LOGGING_BUFFERED_STREAM', '1'),
 
+        # Node(
+        #     package='usb_cam',
+        #     executable='usb_cam_node_exe',
+        #     name='usb_cam',
+        #     output='screen',
+        #     # prefix='gnome-terminal -- gdb -ex run --args'
+        # ),
+
         Node(
-            package='usb_cam',
-            executable='usb_cam_node_exe',
-            name='usb_cam',
+            package='camera_ros',
+            executable='camera_node',
+            name='camera_node',
             output='screen',
             # prefix='gnome-terminal -- gdb -ex run --args'
         ),
