@@ -57,7 +57,7 @@ def on_press(k):
     if jobsData is None:
       jobsData = {}
     if DEVICE_NAME not in jobsData:
-      jobsData[DEVICE_NAME] = {'__type': pg_msgs.msg.Device.TYPE_PUMP_CRANE}
+      jobsData[DEVICE_NAME] = {'__type': Device.TYPE_PUMP_CRANE}
     jobsData[DEVICE_NAME][name] = {
         'angle_from': angleFrom if angleFrom != -1 else angleTo,
         'angle_to': angleTo if angleTo != -1 else angleFrom,

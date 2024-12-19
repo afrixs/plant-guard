@@ -18,7 +18,7 @@ RUN apt-get install -y iproute2
 # && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
 #RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
 # && MAKEFLAGS=-j1 colcon build --symlink-install --parallel-workers 1
-RUN apt-get install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-zenoh-bridge-dds cron
+RUN apt-get install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-zenoh-bridge-dds cron screen
 
 # python3-portalocker not working with rosdep :/
 RUN apt-get install -y python3-pip \
@@ -32,9 +32,11 @@ WORKDIR /pg_ws/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash
 COPY pg_ws/src src
 COPY pg_ws/deps deps
+RUN find deps -maxdepth 2 -mindepth 2 -type d -name build -exec rm -r {} \;
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 RUN touch src/mocked_rpi/COLCON_IGNORE
+RUN touch src/mocked_spidev/COLCON_IGNORE
 RUN touch src/pg_rviz_plugins/COLCON_IGNORE
 RUN touch src/bagtube/bagtube_rviz_plugins/COLCON_IGNORE
 RUN touch deps/COLCON_IGNORE

@@ -46,4 +46,13 @@ sudo nano /etc/dphys-swapfile -> CONF_SWAPSIZE=2048
 sudo reboot
 Note: `docker-*.bash` must be run with `sudo`
 
-sudo crontab -e -> @reboot /usr/bin/python3 /home/pi/plant-guard/docker-run.bash 1>>/root/plant_guard_control_out.log 2>>/root/plant_guard_control_err.log
+TODO:
+sudo crontab -e -> @reboot bash -i -c "/home/pi/plant-guard/docker-run.bash" 1>>/root/plant_guard_control_out.log 2>>/root/plant_guard_control_err.log
+
+server:
+```
+sudo yum update
+sudo yum install docker
+sudo systemctl enable docker
+sudo crontab -e -> @reboot sudo docker run --init --rm --net=host -p 7447:7447/tcp -p 8000:8000/tcp eclipse/zenoh:0.5.0-beta.9
+```

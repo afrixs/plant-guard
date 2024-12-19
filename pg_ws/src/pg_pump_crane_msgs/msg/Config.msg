@@ -1,0 +1,1 @@
+string DEVICE_TYPE="pump_crane"

@@ -3,12 +3,22 @@
     <!-- Displays plugins -->
   
     <class
-      name="pg_rviz_plugins/PlantGuardPanel"
-      type="pg_rviz_plugins::PlantGuardPanel"
-      base_class_type="rviz_common::Panel"
+            name="pg_rviz_plugins/PumpCranePanel"
+            type="pg_rviz_plugins::PumpCranePanel"
+            base_class_type="rviz_common::Panel"
     >
-      <description>
-        A panel widget for bagtube recording, playback and recorded bags listing.
-      </description>
+        <description>
+            A panel widget for bagtube recording, playback and recorded bags listing.
+        </description>
+    </class>
+
+    <class
+            name="pg_rviz_plugins/MoistureSensorPanel"
+            type="pg_rviz_plugins::MoistureSensorPanel"
+            base_class_type="rviz_common::Panel"
+    >
+        <description>
+            A panel widget for bagtube recording, playback and recorded bags listing.
+        </description>
     </class>
 </library>

@@ -1,9 +1,26 @@
 bagtube_server:
   ros__parameters:
     max_total_size_gb: 0.0  # no limit
+    initial_wait_for_publishers_timeout: 10.0
     toggle_input_nodes_running_services: [set_capture, image_raw/enable_encoder]
-    pipes: [image_raw]
+    pipes: [image_raw, pump_crane_angle, pump_crane_pump, moisture_sensor_moistures, moisture_sensor_config_stamped]
     image_raw:
       type: h264_msgs/msg/Packet
       input_topic: /image_raw/h264
       output_topic: /image_stream/h264
+    pump_crane_angle:
+      type: pg_msgs/msg/Float64Stamped
+      input_topic: /pump_crane/angle
+      output_topic: /pump_crane/angle_stream
+    pump_crane_pump:
+      type: pg_msgs/msg/BoolStamped
+      input_topic: /pump_crane/pump
+      output_topic: /pump_crane/pump_stream
+    moisture_sensor_moistures:
+      type: pg_msgs/msg/Float64ArrayStamped
+      input_topic: /moisture_sensor/moistures
+      output_topic: /moisture_sensor/moistures_stream
+    moisture_sensor_config_stamped:
+        type: pg_moisture_sensor_msgs/msg/ConfigStamped
+        input_topic: /moisture_sensor/config_stamped
+        output_topic: /moisture_sensor/config_stamped_stream

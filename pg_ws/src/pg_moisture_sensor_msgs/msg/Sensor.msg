@@ -1,0 +1,4 @@
+string measure_name
+float64 zero_moisture_value
+float64 full_moisture_value
+

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(pgpc_msgs)
+project(pg_pump_crane_msgs)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -9,14 +9,15 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
-find_package(builtin_interfaces REQUIRED)
+find_package(pg_msgs REQUIRED)
 
 set(dependencies
-  builtin_interfaces
+  pg_msgs
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "action/PerformJob.action"
+  "msg/Config.msg"
   "msg/Job.msg"
   DEPENDENCIES ${dependencies}
 )

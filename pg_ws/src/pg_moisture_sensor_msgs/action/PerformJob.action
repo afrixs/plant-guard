@@ -1,0 +1,7 @@
+# request
+Job job
+---
+# result
+string completion_reason  # "measurement_time_elapsed" or "terminate condition met"
+---
+# feedback

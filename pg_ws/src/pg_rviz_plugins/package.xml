@@ -13,6 +13,8 @@
   <depend>rviz_rendering</depend>
   <depend>rclcpp</depend>
   <depend>pg_msgs</depend>
+  <depend>pg_pump_crane_msgs</depend>
+  <depend>pg_moisture_sensor_msgs</depend>
   <depend>std_srvs</depend>
   <depend>bagtube_rviz_plugins</depend>
 

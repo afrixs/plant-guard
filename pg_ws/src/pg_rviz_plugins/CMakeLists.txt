@@ -11,6 +11,8 @@ find_package(rviz2 REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(pg_msgs REQUIRED)
+find_package(pg_pump_crane_msgs REQUIRED)
+find_package(pg_moisture_sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(bagtube_rviz_plugins REQUIRED)
 
@@ -19,13 +21,16 @@ set(dependencies
   rviz_rendering
   rclcpp
   pg_msgs
+  pg_pump_crane_msgs
+  pg_moisture_sensor_msgs
   std_srvs
   bagtube_rviz_plugins
 )
 find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
 
 set(pg_rviz_plugins_headers_to_moc
-  include/pg_rviz_plugins/plant_guard_panel.hpp
+  include/pg_rviz_plugins/moisture_sensor_panel.hpp
+  include/pg_rviz_plugins/pump_crane_panel.hpp
   include/pg_rviz_plugins/pump_crane_joystick.hpp
 )
 
@@ -34,7 +39,9 @@ foreach(header "${pg_rviz_plugins_headers_to_moc}")
 endforeach()
 
 set(pg_rviz_plugins_source_files
-  src/plant_guard_panel.cpp
+  src/common.cpp
+  src/moisture_sensor_panel.cpp
+  src/pump_crane_panel.cpp
   src/pump_crane_joystick.cpp
 )
 

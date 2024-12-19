@@ -8,7 +8,7 @@
   <license>MIT</license>
 
   <depend>rclpy</depend>
-  <depend>pgpc_msgs</depend>
+  <depend>pg_pump_crane_msgs</depend>
   <depend>pg_msgs</depend>
   <depend>std_msgs</depend>
 

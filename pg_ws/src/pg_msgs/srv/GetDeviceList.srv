@@ -1,3 +1,6 @@
+string name
+string type
 ---
 # response
+string error_message
 Device[] devices

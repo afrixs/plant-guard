@@ -1,2 +1,2 @@
-std_msgs/Header header
+MeasurementHeader header
 float64 data

@@ -2,8 +2,8 @@
 // Created by matej on 23/09/23.
 //
 
-#ifndef PLANT_GUARD_PLANT_GUARD_PANEL_HPP
-#define PLANT_GUARD_PLANT_GUARD_PANEL_HPP
+#ifndef PLANT_GUARD_PUMP_CRANE_PANEL_HPP
+#define PLANT_GUARD_PUMP_CRANE_PANEL_HPP
 
 #include <rclcpp/rclcpp.hpp>
 #include <rviz_common/panel.hpp>
@@ -27,10 +27,10 @@
 
 namespace pg_rviz_plugins {
 
-class PlantGuardPanel : public rviz_common::Panel {
+class PumpCranePanel : public rviz_common::Panel {
   Q_OBJECT
 public:
-  PlantGuardPanel( QWidget* parent = 0 );
+  PumpCranePanel( QWidget* parent = 0 );
 
   // Now we declare overrides of rviz::Panel functions for saving and
   // loading data from the config file.  Here the data is the
@@ -79,15 +79,12 @@ protected:
   double last_angle_ = std::numeric_limits<double>::infinity();
   rclcpp::Time last_pump_time_ = rclcpp::Time(0);
 
-  template<class MsgT>
-  typename MsgT::Response::SharedPtr callService(typename rclcpp::Client<MsgT>::SharedPtr client, const typename MsgT::Request::SharedPtr& request);
-
   void updateButtonsAvailability();
   bool isJobCellValid(int row, int column, std::string *error_msg = nullptr);
 
   class EditingCellGuard {
   public:
-    EditingCellGuard(PlantGuardPanel *panel) : panel_(panel) {
+    EditingCellGuard(PumpCranePanel *panel) : panel_(panel) {
       panel_->editing_cells_internally_ = true;
     }
 
@@ -95,11 +92,11 @@ protected:
       panel_->editing_cells_internally_ = false;
     }
   private:
-    PlantGuardPanel *panel_;
+    PumpCranePanel *panel_;
   };
 
 };
 
 } // pg_rviz_plugins
 
-#endif //PLANT_GUARD_PLANT_GUARD_PANEL_HPP
+#endif //PLANT_GUARD_PUMP_CRANE_PANEL_HPP

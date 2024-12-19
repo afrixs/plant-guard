@@ -8,13 +8,20 @@ def generate_launch_description():
 
     return LaunchDescription([
         Node(
-            package='image_transport',
+            package='image_transport_tmp',
             executable='republish',
             name='h264_decoder',
-            arguments=['h264', 'raw'],
+            # arguments=['h264', 'raw'],
             remappings=[
                 ('in/h264', 'image_stream/h264'),
                 ('out', 'image_uncompressed'),
+            ],
+            parameters=[
+                { 'in_transport': 'h264',
+                  'out_transport': 'raw',
+                  'qos_overrides./image_stream/h264.publisher.reliability': 'best_effort',
+                  'qos_overrides./image_stream/h264.subscription.reliability': 'best_effort',
+                },
             ],
             output='screen',
         ),
@@ -25,40 +32,57 @@ def generate_launch_description():
             name='rviz2',
             arguments=['-d', bringup_dir + '/rviz/plant_guard.rviz'],
             output='screen',
+            # prefix='gnome-terminal -- gdb -ex run --args'
         ),
 
         ExecuteProcess(
             # cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-d', '0', '-a',
-            #      '^rt/image_stream/h264$|^rt/pump_crane/angle$|^rt/pump_crane/angle_cmd$|^rt/pump_crane/movement_dir_cmd$|^rt/pump_crane/pump$|^rt/pump_crane/pump_cmd$|'
-            #      '^rq/control_playbackRequest$|^rr/control_playbackReply$|^rq/edit_bagRequest$|^rr/edit_bagReply$|^rq/edit_jobRequest$|^rr/edit_jobReply$|'
-            #      '^rq/enable_livestreamRequest$|^rr/enable_livestreamReply$|^rq/get_bag_listRequest$|^rr/get_bag_listReply$|^rq/get_job_listRequest$|^rr/get_job_listReply$|'
+            #      '^rt/image_stream/h264$|'
+            #      '^rt/moisture_sensor/moistures_stream$|^rt/moisture_sensor/config_stamped_stream$|'
+            #      '^rt/pump_crane/angle_stream$|^rt/pump_crane/angle_cmd$|^rt/pump_crane/movement_dir_cmd$|^rt/pump_crane/pump_stream$|^rt/pump_crane/pump_cmd$|'
+            #      '^rq/control_playbackRequest$|^rr/control_playbackReply$|^rq/edit_bagRequest$|^rr/edit_bagReply$|'
+            #      '^rq/enable_livestreamRequest$|^rr/enable_livestreamReply$|^rq/get_bag_listRequest$|^rr/get_bag_listReply$|'
+            #      '^rq/edit_jobRequest$|^rr/edit_jobReply$|^rq/get_job_listRequest$|^rr/get_job_listReply$|'
+            #      '^rq/edit_deviceRequest$|^rr/edit_deviceReply$|^rq/get_device_listRequest$|^rr/get_device_listReply$|'
             #      '^rt/play_bag/_action/feedback$|^rt/play_bag/_action/status$|'
             #      '^rq/play_bag/_action/cancel_goalRequest$|^rr/play_bag/_action/cancel_goalReply$|'
             #      '^rq/play_bag/_action/get_resultRequest$|^rr/play_bag/_action/get_resultReply$|'
             #      '^rq/play_bag/_action/send_goalRequest$|^rr/play_bag/_action/send_goalReply$|'
             #      '$|'],  # zenoh 0.7.2, LAN/localhost
             # cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-m', 'client', '-e', 'tcp/archeryarena.org:7447', '-d', '0', '-a',
-            #      '^rt/image_stream/h264$|^rt/pump_crane/angle$|^rt/pump_crane/angle_cmd$|^rt/pump_crane/movement_dir_cmd$|^rt/pump_crane/pump$|^rt/pump_crane/pump_cmd$|'
-            #      '^rq/control_playbackRequest$|^rr/control_playbackReply$|^rq/edit_bagRequest$|^rr/edit_bagReply$|^rq/edit_jobRequest$|^rr/edit_jobReply$|'
-            #      '^rq/enable_livestreamRequest$|^rr/enable_livestreamReply$|^rq/get_bag_listRequest$|^rr/get_bag_listReply$|^rq/get_job_listRequest$|^rr/get_job_listReply$|'
+            #      '^rt/image_stream/h264$|'
+            #      '^rt/moisture_sensor/moistures_stream$|^rt/moisture_sensor/config_stamped_stream$|'
+            #      '^rt/pump_crane/angle_stream$|^rt/pump_crane/angle_cmd$|^rt/pump_crane/movement_dir_cmd$|^rt/pump_crane/pump_stream$|^rt/pump_crane/pump_cmd$|'
+            #      '^rq/control_playbackRequest$|^rr/control_playbackReply$|^rq/edit_bagRequest$|^rr/edit_bagReply$|'
+            #      '^rq/enable_livestreamRequest$|^rr/enable_livestreamReply$|^rq/get_bag_listRequest$|^rr/get_bag_listReply$|'
+            #      '^rq/edit_jobRequest$|^rr/edit_jobReply$|^rq/get_job_listRequest$|^rr/get_job_listReply$|'
+            #      '^rq/edit_deviceRequest$|^rr/edit_deviceReply$|^rq/get_device_listRequest$|^rr/get_device_listReply$|'
             #      '^rt/play_bag/_action/feedback$|^rt/play_bag/_action/status$|'
             #      '^rq/play_bag/_action/cancel_goalRequest$|^rr/play_bag/_action/cancel_goalReply$|'
             #      '^rq/play_bag/_action/get_resultRequest$|^rr/play_bag/_action/get_resultReply$|'
             #      '^rq/play_bag/_action/send_goalRequest$|^rr/play_bag/_action/send_goalReply$|'
             #      '$|'],  # zenoh 0.7.2, internet
             # cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-d', '0', '-a',
-            #      'rt/image_stream/h264|rt/pump_crane/angle|rt/pump_crane/angle_cmd|rt/pump_crane/movement_dir_cmd|rt/pump_crane/pump|rt/pump_crane/pump_cmd|'
-            #      'rq/control_playbackRequest|rr/control_playbackReply|rq/edit_bagRequest|rr/edit_bagReply|rq/edit_jobRequest|rr/edit_jobReply|'
-            #      'rq/enable_livestreamRequest|rr/enable_livestreamReply|rq/get_bag_listRequest|rr/get_bag_listReply|rq/get_job_listRequest|rr/get_job_listReply|'
+            #      'rt/image_stream/h264|'
+            #      'rt/moisture_sensor/moistures_stream|rt/moisture_sensor/config_stamped_stream|'
+            #      'rt/pump_crane/angle_stream|rt/pump_crane/angle_cmd|rt/pump_crane/movement_dir_cmd|rt/pump_crane/pump_stream|rt/pump_crane/pump_cmd|'
+            #      'rq/control_playbackRequest|rr/control_playbackReply|rq/edit_bagRequest|rr/edit_bagReply|'
+            #      'rq/enable_livestreamRequest|rr/enable_livestreamReply|rq/get_bag_listRequest|rr/get_bag_listReply|'
+            #      'rq/edit_jobRequest|rr/edit_jobReply|rq/get_job_listRequest|rr/get_job_listReply|'
+            #      'rq/edit_deviceRequest|rr/edit_deviceReply|rq/get_device_listRequest|rr/get_device_listReply|'
             #      'rt/play_bag/_action/feedback|rt/play_bag/_action/status|'
             #      'rq/play_bag/_action/cancel_goalRequest|rr/play_bag/_action/cancel_goalReply|'
             #      'rq/play_bag/_action/get_resultRequest|rr/play_bag/_action/get_resultReply|'
             #      'rq/play_bag/_action/send_goalRequest|rr/play_bag/_action/send_goalReply'
             #      ],  # zenoh 0.5.0, LAN/localhost
             cmd=['ros2', 'run', 'zenoh_bridge_dds', 'zenoh_bridge_dds', '-m', 'client', '-e', 'tcp/archeryarena.org:7447', '-d', '0', '-a',
-                 'rt/image_stream/h264|rt/pump_crane/angle|rt/pump_crane/angle_cmd|rt/pump_crane/movement_dir_cmd|rt/pump_crane/pump|rt/pump_crane/pump_cmd|'
-                 'rq/control_playbackRequest|rr/control_playbackReply|rq/edit_bagRequest|rr/edit_bagReply|rq/edit_jobRequest|rr/edit_jobReply|'
-                 'rq/enable_livestreamRequest|rr/enable_livestreamReply|rq/get_bag_listRequest|rr/get_bag_listReply|rq/get_job_listRequest|rr/get_job_listReply|'
+                 'rt/image_stream/h264|'
+                 'rt/moisture_sensor/moistures_stream|rt/moisture_sensor/config_stamped_stream|'
+                 'rt/pump_crane/angle_stream|rt/pump_crane/angle_cmd|rt/pump_crane/movement_dir_cmd|rt/pump_crane/pump_stream|rt/pump_crane/pump_cmd|'
+                 'rq/control_playbackRequest|rr/control_playbackReply|rq/edit_bagRequest|rr/edit_bagReply|'
+                 'rq/enable_livestreamRequest|rr/enable_livestreamReply|rq/get_bag_listRequest|rr/get_bag_listReply|'
+                 'rq/edit_jobRequest|rr/edit_jobReply|rq/get_job_listRequest|rr/get_job_listReply|'
+                 'rq/edit_deviceRequest|rr/edit_deviceReply|rq/get_device_listRequest|rr/get_device_listReply|'
                  'rt/play_bag/_action/feedback|rt/play_bag/_action/status|'
                  'rq/play_bag/_action/cancel_goalRequest|rr/play_bag/_action/cancel_goalReply|'
                  'rq/play_bag/_action/get_resultRequest|rr/play_bag/_action/get_resultReply|'

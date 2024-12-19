@@ -11,19 +11,20 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(pgpc_msgs REQUIRED)
 
 set(dependencies
   builtin_interfaces
-  pgpc_msgs
   std_msgs
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BoolStamped.msg"
-  "msg/Device.msg"
+  "msg/Float64ArrayStamped.msg"
   "msg/Float64Stamped.msg"
+  "msg/MeasurementHeader.msg"
+  "msg/Device.msg"
   "msg/Job.msg"
+  "srv/EditDevice.srv"
   "srv/EditJob.srv"
   "srv/GetDeviceList.srv"
   "srv/GetJobList.srv"

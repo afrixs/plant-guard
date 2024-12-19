@@ -1,5 +1,5 @@
 # request
-string device
+string device_name
 string name
 ---
 # response
