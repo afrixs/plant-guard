@@ -18,22 +18,25 @@ RUN apt-get install -y iproute2
 # && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
 #RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
 # && MAKEFLAGS=-j1 colcon build --symlink-install --parallel-workers 1
-RUN apt-get install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-zenoh-bridge-dds cron screen
+RUN apt-get install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-zenoh-bridge-dds cron screen meson ninja-build
 
 # python3-portalocker not working with rosdep :/
 RUN apt-get install -y python3-pip \
     && python3 -m pip install --upgrade pip \
-    && python3 -m pip install portalocker
+    && pip3 install portalocker jinja2 ply
 
 FROM base as app
 # Create Colcon workspace with external dependencies
 RUN mkdir -p /pg_ws/
 WORKDIR /pg_ws/
-RUN source /opt/ros/${ROS_DISTRO}/setup.bash
-COPY pg_ws/src src
 COPY pg_ws/deps deps
 RUN find deps -maxdepth 2 -mindepth 2 -type d -name build -exec rm -r {} \;
+
+RUN cd deps/libcamera && meson setup build && ninja -C build install && cd ../..
+
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+COPY pg_ws/src src
 
 RUN touch src/mocked_rpi/COLCON_IGNORE
 RUN touch src/mocked_spidev/COLCON_IGNORE
@@ -41,15 +44,13 @@ RUN touch src/pg_rviz_plugins/COLCON_IGNORE
 RUN touch src/bagtube/bagtube_rviz_plugins/COLCON_IGNORE
 RUN touch deps/COLCON_IGNORE
 
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+    && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} --skip-keys libcamera -y
+
 #RUN source /dds_ws/install/setup.bash \
 # && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
 #RUN source /dds_ws/install/setup.bash \
 # && colcon build --symlink-install --packages-ignore mocked_rpi bagtube_rviz_plugins pg_rviz_plugins
-RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} --skip-keys libcamera -y
-RUN apt install meson ninja-build -y
-RUN pip3 install jinja2 ply
-RUN cd deps/libcamera && meson setup build && ninja -C build install && cd ../..
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     # && MAKEFLAGS=-j1 colcon build --symlink-install --parallel-workers 1
     && colcon build --symlink-install  # can be used instead in case the RPi has proper cooling maybe...

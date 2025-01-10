@@ -42,12 +42,13 @@ First test was successful: Here are images of our plants before and after leavin
 ![t = 9 days](docs/photo_t_8days.jpg)
 
 sudo raspi-config -> System Options -> Boot / Auto Login -> Console Autologin
-sudo nano /etc/dphys-swapfile -> CONF_SWAPSIZE=2048
-sudo reboot
+sudo nano /etc/dphys-swapfile -> CONF_SWAPSIZE=4096, CONF_MAXSWAP=4096
+sudo dphys-swapfile setup
 Note: `docker-*.bash` must be run with `sudo`
 
-TODO:
-sudo crontab -e -> @reboot bash -i -c "/home/pi/plant-guard/docker-run.bash" 1>>/root/plant_guard_control_out.log 2>>/root/plant_guard_control_err.log
+sudo apt install screen
+sudo crontab -e -> @reboot screen -DmS plant_guard bash -i -c "/home/pi/plant-guard/docker-run.bash 1>>/root/plant_guard_control_out.log 2>>/root/plant_guard_control_err.log"
+screen -S plant_guard -X quit
 
 server:
 ```
