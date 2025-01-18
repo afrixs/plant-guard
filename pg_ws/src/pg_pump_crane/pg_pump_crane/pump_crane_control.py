@@ -5,7 +5,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy
 from std_msgs.msg import Int32, Bool
 # from pg_msgs.srv import GetJobs, EditJob
-from std_msgs.msg import Header
+from pg_msgs.msg import MeasurementHeader
 from pg_pump_crane_msgs.action import PerformJob
 from pg_msgs.msg import Float64Stamped, BoolStamped
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
@@ -183,11 +183,11 @@ class PumpCraneControl(Node):
     return result
 
   def stepper_pos_callback(self, pos):
-    self.angle_pub.publish(Float64Stamped(header=Header(stamp=self.get_clock().now().to_msg()), data=pos))
+    self.angle_pub.publish(Float64Stamped(header=MeasurementHeader(stamp=self.get_clock().now().to_msg()), data=pos))
 
   def pump_callback(self, pumping):
     self.get_logger().info("pumping: " + str(pumping))
-    self.pump_pub.publish(BoolStamped(header=Header(stamp=self.get_clock().now().to_msg()), data=pumping))
+    self.pump_pub.publish(BoolStamped(header=MeasurementHeader(stamp=self.get_clock().now().to_msg()), data=pumping))
     if pumping:
       with self.current_job_goal_handle_lock:
         self.get_logger().info("cur_job_handle: " + str(self.current_job_goal_handle))

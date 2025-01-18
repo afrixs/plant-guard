@@ -44,6 +44,17 @@ First test was successful: Here are images of our plants before and after leavin
 sudo raspi-config -> System Options -> Boot / Auto Login -> Console Autologin
 sudo nano /etc/dphys-swapfile -> CONF_SWAPSIZE=4096, CONF_MAXSWAP=4096
 sudo dphys-swapfile setup
+mkdir .plant_guard
+mkdir .ros
+sudo ln -s /home/pi/.ros /root/.ros
+sudo ln -s /home/pi/.plant_guard /root/.plant_guard
+sudo ln -s /var/spool/cron/crontabs /root/.plant_guard_cron
+tmp (TODO): nano .plant_guard/jobs.yaml
+# add following 3 lines
+pump_crane:
+  __config: {}
+  __type: pump_crane
+
 Note: `docker-*.bash` must be run with `sudo`
 
 sudo apt install screen

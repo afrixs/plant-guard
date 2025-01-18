@@ -112,6 +112,7 @@ def generate_launch_description():
                  'rq/play_bag/_action/get_resultRequest|rr/play_bag/_action/get_resultReply|'
                  'rq/play_bag/_action/send_goalRequest|rr/play_bag/_action/send_goalReply'
                  ],  # zenoh 0.5.0, internet
+            respawn=True,  # try to reconnect if zenoh router is down
             output='screen',
         ),
     ])
