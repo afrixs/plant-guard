@@ -44,6 +44,7 @@ RUN touch src/pg_rviz_plugins/COLCON_IGNORE
 RUN touch src/bagtube/bagtube_rviz_plugins/COLCON_IGNORE
 RUN touch deps/COLCON_IGNORE
 
+RUN apt-get update -y
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} --skip-keys libcamera -y
 

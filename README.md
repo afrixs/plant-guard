@@ -55,6 +55,11 @@ pump_crane:
   __config: {}
   __type: pump_crane
 
+sudo ./docker-build.bash
+# or to run in background:
+sudo apt install screen
+sudo screen -dmS plant_guard_build ./docker-build.bash
+
 Note: `docker-*.bash` must be run with `sudo`
 
 sudo apt install screen
