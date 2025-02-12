@@ -8,7 +8,7 @@ bagtube_server:
 #      type: h264_msgs/msg/Packet
 #      input_topic: /image_raw/h264
 #      output_topic: /image_stream/h264
-      type: ffmpeg_image_transport/msg/FFMPEGPacket
+      type: ffmpeg_image_transport_msgs/msg/FFMPEGPacket
       input_topic: /image_raw/ffmpeg
       output_topic: /image_stream/ffmpeg
     pump_crane_angle:
