@@ -248,7 +248,7 @@ bool PumpCranePanel::isJobCellValid(int row, int column, std::string *error_msg)
       }
       return true;
     case PCColumn::NAME: {
-      if (!std::regex_match(text, std::regex(ALLOWED_NAMING_PATTERN, std::regex_constants::basic))) {
+      if (!std::regex_match(text, std::regex(ALLOWED_NAMING_PATTERN, std::regex_constants::ECMAScript))) {
         if (error_msg)
           *error_msg = "Invalid name";
         return false;
