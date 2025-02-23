@@ -58,8 +58,8 @@ pump_crane:
 sudo ./docker-build.bash
 # or to run in background:
 sudo apt install screen
-sudo screen -dmS plant_guard_build ./docker-build.bash
-
+sudo screen -dmS plant_guard_build /bin/bash -i -c "./docker-build.bash 2>>/root/build_docker.err 1>>/root/build_docker.out"
+sudo tail -f /root/build_docker.err
 Note: `docker-*.bash` must be run with `sudo`
 
 sudo apt install screen

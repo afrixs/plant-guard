@@ -14,7 +14,7 @@ def generate_launch_description():
             name='h264_decoder',
             # arguments=['h264', 'raw'],
             remappings=[
-                ('in/ffmpeg', 'image_stream/ffmpeg'),
+                ('in/ffmpeg', 'image_raw/ffmpeg'),
                 ('out', 'image_uncompressed'),
             ],
             parameters=[

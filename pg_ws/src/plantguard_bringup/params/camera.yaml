@@ -10,6 +10,7 @@
 
 camera_node:
   ros__parameters:
+    format: YUYV
     ffmpeg_image_transport:
       encoding: "libx264"
       profile: "main"
