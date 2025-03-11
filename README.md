@@ -58,13 +58,14 @@ pump_crane:
 sudo ./docker-build.bash
 # or to run in background:
 sudo apt install screen
-sudo screen -dmS plant_guard_build /bin/bash -i -c "./docker-build.bash 2>>/root/build_docker.err 1>>/root/build_docker.out"
+./docker-build.bash 2>>/root/build_docker.err 1>>/root/build_docker.out"
 sudo tail -f /root/build_docker.err
+# sudo screen -S plant_guard_build -X quit
 Note: `docker-*.bash` must be run with `sudo`
 
 sudo apt install screen
 sudo crontab -e -> @reboot screen -DmS plant_guard bash -i -c "/home/pi/plant-guard/docker-run.bash 1>>/root/plant_guard_control_out.log 2>>/root/plant_guard_control_err.log"
-screen -S plant_guard -X quit
+sudo screen -S plant_guard -X quit
 
 server:
 ```

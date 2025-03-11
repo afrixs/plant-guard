@@ -1,6 +1,6 @@
 ARG ROS_DISTRO=iron
  
-FROM ros:${ROS_DISTRO}-ros-base as base
+FROM ros:${ROS_DISTRO}-ros-base AS base
 ENV ROS_DISTRO=${ROS_DISTRO}
 SHELL ["/bin/bash", "-c"]
 
@@ -25,7 +25,7 @@ RUN apt-get install -y python3-pip \
     && python3 -m pip install --upgrade pip \
     && pip3 install portalocker jinja2 ply
 
-FROM base as app
+FROM base AS app
 # Create Colcon workspace with external dependencies
 RUN mkdir -p /pg_ws/
 WORKDIR /pg_ws/
@@ -71,7 +71,7 @@ EXPOSE 7446/udp
 EXPOSE 7447/tcp
 EXPOSE 8000/tcp
 
-ENV RUST_LOG info
+ENV RUST_LOG=info
 
 # Set up the entrypoint
 COPY ./docker-entrypoint.sh /entrypoint.sh
