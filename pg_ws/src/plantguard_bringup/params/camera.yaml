@@ -10,7 +10,7 @@
 
 camera_node:
   ros__parameters:
-    format: YUV420
+    format: NV21
     role: video
     width: 640
     height: 480
@@ -29,4 +29,4 @@ camera_node:
 h264_decoder:
   ros__parameters:
     ffmpeg_image_transport:
-      map.libx265: "hevc"
+      map.h264: "h264"

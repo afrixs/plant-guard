@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.actions import ExecuteProcess, SetEnvironmentVariable, DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, NotSubstitution
+from launch.substitutions import LaunchConfiguration
 from ament_index_python.packages import get_package_share_directory
 import os
 
@@ -29,7 +29,7 @@ def generate_launch_description():
             output='screen',
             parameters=[
                 os.path.join(pkg_dir, 'params', 'camera.yaml'),
-                {'publish_via_image_transport': NotSubstitution(LaunchConfiguration('raspberry_pi'))},
+                {'use_rpicam_encoder': LaunchConfiguration('raspberry_pi')},
             ],
             # prefix='gnome-terminal -- gdb -ex run --args'
         ),
