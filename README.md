@@ -41,6 +41,7 @@ First test was successful: Here are images of our plants before and after leavin
 ![t = 0](docs/photo_t_0days.jpg)
 ![t = 9 days](docs/photo_t_8days.jpg)
 
+sudo nano /boot/firmware/config.txt -> dtparam=spi=on
 sudo raspi-config -> System Options -> Boot / Auto Login -> Console Autologin
 sudo nano /etc/dphys-swapfile -> CONF_SWAPSIZE=4096, CONF_MAXSWAP=4096
 sudo dphys-swapfile setup
@@ -58,7 +59,7 @@ pump_crane:
 sudo ./docker-build.bash
 # or to run in background:
 sudo apt install screen
-./docker-build.bash 2>>/root/build_docker.err 1>>/root/build_docker.out"
+sudo screen -dmS plant_guard_build /bin/bash -i -c "./docker-build.bash 2>>/root/build_docker.err 1>>/root/build_docker.out"
 sudo tail -f /root/build_docker.err
 # sudo screen -S plant_guard_build -X quit
 Note: `docker-*.bash` must be run with `sudo`

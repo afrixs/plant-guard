@@ -34,7 +34,7 @@ import time
 
 # Pin definition
 RST_PIN         = 18
-CS_PIN       = 22
+CS_PIN       = 4  # 22
 DRDY_PIN        = 17
 
 # SPI device, bus = 0, device = 0

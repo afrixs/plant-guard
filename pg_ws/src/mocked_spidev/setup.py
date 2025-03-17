@@ -8,8 +8,8 @@ setup(
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + 'mocked_spidev']),
-        ('share/' + 'mocked_spidev', ['package.xml']),
+            ['resource/' + 'python3-spidev']),
+        ('share/' + 'python3-spidev', ['package.xml']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
