@@ -75,3 +75,15 @@ sudo yum install docker
 sudo systemctl enable docker
 sudo crontab -e -> @reboot sudo docker run --init --rm --net=host -p 7447:7447/tcp -p 8000:8000/tcp eclipse/zenoh:0.5.0-beta.9
 ```
+
+client:
+ros2 launch plantguard_bringup pump_crane_client.launch.py
+
+testing on local machine:
+sudo ./docker-build.bash --build-arg use_mocks=true
+sudo ./docker-run.bash raspberry_pi:=false stream_over_internet:=false
+ros2 launch plantguard_bringup pump_crane_client.launch.py stream_over_internet:=false
+
+(for building on native system):
+rosdep update --include-eol-distros
+rosdep install --from-paths src --ignore-src --rosdistro iron --skip-keys libcamera -y

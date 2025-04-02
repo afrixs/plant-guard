@@ -10,6 +10,11 @@
   <depend>usb_cam</depend>
   <depend>zenoh_bridge_dds</depend>
   <depend>pg_pump_crane</depend>
+  <depend>pg_moisture_sensor</depend>
+  <depend>pg_job_management</depend>
+  <depend>image_transport_tmp</depend>
+  <depend>camera_ros</depend>
+  <depend>ffmpeg_image_transport</depend>
 
   <test_depend>demo_nodes_cpp</test_depend>
   <test_depend>ament_copyright</test_depend>
