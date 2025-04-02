@@ -225,6 +225,8 @@ void PumpCranePanel::refreshJobs() {
 
   if (prev_selected_row >= 0)
     pc_jobs_table_->selectRow(std::min(pc_jobs_table_->rowCount() - 1, prev_selected_row));
+
+  status_label_->setText("Jobs refreshed");
 }
 
 void PumpCranePanel::onPumpCraneJobSelected(int row, int column) {

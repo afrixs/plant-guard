@@ -62,7 +62,7 @@
   * DIN    ->    MOSI
   * SCLK   ->    SCLK
   * GND    ->    GND
-  * RST    ->    12 (Physical, BCM: GPIO. 1, 18)
+  * RST/PDWN ->  12 (Physical, BCM: GPIO. 1, 18)
   * CS     ->    7 (Physical, BCM: GPIO. 7, 4)  # original: 15 (Physical, BCM: GPIO. 3, 22)
   * DRDY   ->    11 (Physical, BCM: GPIO. 0, 17)
 

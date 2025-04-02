@@ -315,6 +315,7 @@ void MoistureSensorPanel::refreshDevices() {
   }
 
   onDeviceSelected(device_picker_->currentIndex());
+  status_label_->setText("Devices refreshed");
 }
 
 void MoistureSensorPanel::onDeviceSelected(int index) {

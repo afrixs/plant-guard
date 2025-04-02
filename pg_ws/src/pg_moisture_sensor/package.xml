@@ -11,7 +11,8 @@
   <depend>pg_pump_crane_msgs</depend>
   <depend>std_msgs</depend>
   <depend>bagtube_server</depend>
-  <depend>python3-spidev</depend>
+<!--  Not existent in rosdep, needs to be installed manually in Dockerfile :/-->
+<!--  <depend>python3-spidev</depend>-->
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

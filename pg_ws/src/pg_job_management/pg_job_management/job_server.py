@@ -217,7 +217,8 @@ class JobServer(Node):
         return response
       old_interface = self.device_interfaces.get(request.name_before_renaming, None)
       interface = self.device_interfaces.get(request.device.name, None)
-      if interface is None:
+      creating_interface = interface is None
+      if creating_interface:
         interface = get_device_interface(request.device.type)
         if interface is None:
           response.message = "unsupported device type"
@@ -251,6 +252,10 @@ class JobServer(Node):
       if cron is not None:  # device name changed
         old_interface.stop_device()
         cron.write()
+        if not interface.start_device(request.device.name, new_device_config, self):
+          response.message = "failed to start device"
+          return response
+      elif creating_interface:
         if not interface.start_device(request.device.name, new_device_config, self):
           response.message = "failed to start device"
           return response
