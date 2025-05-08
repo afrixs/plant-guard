@@ -16,7 +16,7 @@ class DeviceInterface(DeviceInterfaceBase):
   def start_device(self, device_name: str, config_dict: dict, _node) -> bool:
     self.config_dict = config_dict
     self.device_name = device_name
-    self.startup_process, self.output_redir = self.run_remote_process(
+    self.startup_process, self.output_redir = self.run_external_process(
       device_name, 'r2pg && ros2 run pg_pump_crane pump_crane_control --ros-args -r __ns:=/' + device_name)
     return True
 
@@ -49,6 +49,6 @@ class DeviceInterface(DeviceInterfaceBase):
     job_config_msg.pump_duration = job_config_dict['pump_dur']
     return serialize_message(job_config_msg)
 
-  def create_job_command(self, job_name: str) -> str:
+  def create_job_command(self, job_name: str, job_config_dict: dict) -> str:
     # create job command
     return 'r2pg && ros2 run pg_pump_crane pump_crane_job_client --ros-args -r __ns:=/'+self.device_name+' -p job_name:='+job_name

@@ -31,6 +31,7 @@ typedef enum class PCColumn {
   ANGLE_TO,
   PUMP_DURATION,
   SCHEDULE,
+  CONDITION,
   COUNT
 };
 
@@ -48,6 +49,8 @@ QString toString(PCColumn column) {
       return "Pump duration";
     case PCColumn::SCHEDULE:
       return "Schedule";
+    case PCColumn::CONDITION:
+      return "Condition";
   }
   return "UNKNOWN";
 }
@@ -196,7 +199,7 @@ void PumpCranePanel::refreshJobs() {
   bool had_incomplete_job = false;
   if (pc_jobs_table_->rowCount() > 0)
     for (int j = 0; j < pc_jobs_table_->columnCount(); j++)
-      if (pc_jobs_table_->item(pc_jobs_table_->rowCount() - 1, j)->text().isEmpty()) {
+      if ((PCColumn)j != PCColumn::CONDITION && pc_jobs_table_->item(pc_jobs_table_->rowCount() - 1, j)->text().isEmpty()) {
         had_incomplete_job = true;
         break;
       }
@@ -221,6 +224,7 @@ void PumpCranePanel::refreshJobs() {
     pc_jobs_table_->setItem(i, (int)PCColumn::ANGLE_TO, new QTableWidgetItem(QString::number(pc_job.angle_to/M_PI*180.0)));
     pc_jobs_table_->setItem(i, (int)PCColumn::PUMP_DURATION, new QTableWidgetItem(QString::number(pc_job.pump_duration)));
     pc_jobs_table_->setItem(i, (int)PCColumn::SCHEDULE, new QTableWidgetItem(QString::fromStdString(job.crontab_schedule)));
+    pc_jobs_table_->setItem(i, (int)PCColumn::CONDITION, new QTableWidgetItem(QString::fromStdString(job.condition)));
   }
 
   if (prev_selected_row >= 0)
@@ -239,7 +243,7 @@ void PumpCranePanel::onPumpCraneJobSelected(int row, int column) {
 
 bool PumpCranePanel::isJobCellValid(int row, int column, std::string *error_msg) {
   std::string text = pc_jobs_table_->item(row, column)->text().toStdString();
-  if (text.empty())
+  if (text.empty() && (PCColumn)column != PCColumn::CONDITION)
     return false;
   switch ((PCColumn)column) {
     case PCColumn::DEVICE:
@@ -305,7 +309,7 @@ void PumpCranePanel::onPumpCraneJobEdited(int row, int column) {
 
   bool is_complete_row = true;
   for (int i = 0; i < pc_jobs_table_->columnCount(); i++)
-    if (!pc_jobs_table_->item(row, i) || pc_jobs_table_->item(row, i)->text().isEmpty()) {
+    if (!pc_jobs_table_->item(row, i) || ((PCColumn)i != PCColumn::CONDITION && pc_jobs_table_->item(row, i)->text().isEmpty())) {
       is_complete_row = false;
       break;
     }
@@ -317,12 +321,13 @@ void PumpCranePanel::onPumpCraneJobEdited(int row, int column) {
   request->job.device.name = pc_jobs_table_->item(row, (int)PCColumn::DEVICE)->text().toStdString();
   request->job.device.type = pg_pump_crane_msgs::msg::Config::DEVICE_TYPE;
   request->job.name = pc_jobs_table_->item(row, (int)PCColumn::NAME)->text().toStdString();
+  request->job.crontab_schedule = pc_jobs_table_->item(row, (int)PCColumn::SCHEDULE)->text().toStdString();
+  request->job.condition = pc_jobs_table_->item(row, (int)PCColumn::CONDITION)->text().toStdString();
   pg_pump_crane_msgs::msg::Job pc_job;
   pc_job.angle_from = std::stod(pc_jobs_table_->item(row, (int)PCColumn::ANGLE_FROM)->text().toStdString())/180.0*M_PI;
   pc_job.angle_to = std::stod(pc_jobs_table_->item(row, (int)PCColumn::ANGLE_TO)->text().toStdString())/180.0*M_PI;
   pc_job.pump_duration = std::stod(pc_jobs_table_->item(row, (int)PCColumn::PUMP_DURATION)->text().toStdString());
   serialize_message(pc_job, request->job.config_msg_data);
-  request->job.crontab_schedule = pc_jobs_table_->item(row, (int)PCColumn::SCHEDULE)->text().toStdString();
 
   auto response = callService<pg_msgs::srv::EditJob>(edit_job_cl_, request, *sync_response_executor_);
   if (!response || !response->success) {
@@ -331,14 +336,14 @@ void PumpCranePanel::onPumpCraneJobEdited(int row, int column) {
     pc_jobs_table_->setItem(row, column, new QTableWidgetItem(current_cell_text_));
     return;
   }
-  status_label_->setText("Job " + QString::fromStdString(request->job.name) + " edited");
+  status_label_->setText("Job " + QString::fromStdString(request->job.name) + " edited: " + QString::fromStdString(response->message));
   updateButtonsAvailability();
 }
 
 void PumpCranePanel::onPumpCraneJobDelete(int row, int /*column*/) {
   bool deleting_complete_row = true;
   for (int i = 0; i < pc_jobs_table_->columnCount(); i++)
-    if (pc_jobs_table_->item(row, i)->text().isEmpty()) {
+    if ((PCColumn)i != PCColumn::CONDITION && pc_jobs_table_->item(row, i)->text().isEmpty()) {
       deleting_complete_row = false;
       break;
     }
@@ -364,7 +369,7 @@ void PumpCranePanel::updateButtonsAvailability() {
   bool can_create = true;
   for (int i = 0; i < pc_jobs_table_->rowCount(); i++) {
     for (int j = 0; j < pc_jobs_table_->columnCount(); j++)
-      if (pc_jobs_table_->item(i, j)->text().isEmpty()) {
+      if ((PCColumn)j != PCColumn::CONDITION && pc_jobs_table_->item(i, j)->text().isEmpty()) {
         can_create = false;
         break;
       }

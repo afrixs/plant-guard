@@ -190,9 +190,7 @@ class PumpCraneControl(Node):
     self.pump_pub.publish(BoolStamped(header=MeasurementHeader(stamp=self.get_clock().now().to_msg()), data=pumping))
     if pumping:
       with self.current_job_goal_handle_lock:
-        self.get_logger().info("cur_job_handle: " + str(self.current_job_goal_handle))
         if self.current_job_goal_handle is not None and self.current_job_goal_handle.is_active:
-          self.get_logger().info("publishing WATERING feedback")
           feedback = PerformJob.Feedback()
           feedback.stage = PerformJob.Feedback.STAGE_WATERING
           self.current_job_goal_handle.publish_feedback(feedback)

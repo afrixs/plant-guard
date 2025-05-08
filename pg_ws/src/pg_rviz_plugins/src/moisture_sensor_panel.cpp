@@ -32,6 +32,7 @@ typedef enum class MSJobColumn {
   MEASUREMENT_DURATION,
   TERMINATION_CONDITION,
   SCHEDULE,
+  CONDITION,
   COUNT
 };
 
@@ -47,6 +48,8 @@ QString toString(MSJobColumn column) {
       return "Termination condition";
     case MSJobColumn::SCHEDULE:
       return "Schedule";
+    case MSJobColumn::CONDITION:
+      return "Condition";
     default:
       return "UNKNOWN";
   }
@@ -434,7 +437,7 @@ void MoistureSensorPanel::onDeviceConfigEdited(int row, int column) {
     devices_table_->setItem(row, column, new QTableWidgetItem(current_cell_text_));
     return;
   }
-  status_label_->setText("Device " + QString::fromStdString(request->device.name) + " edited");
+  status_label_->setText("Device " + QString::fromStdString(request->device.name) + " edited: " + QString::fromStdString(response->message));
   updateButtonsAvailability();
 }
 
@@ -474,7 +477,7 @@ void MoistureSensorPanel::refreshJobs() {
   bool had_incomplete_job = false;
   if (jobs_table_->rowCount() > 0)
     for (int j = 0; j < jobs_table_->columnCount(); j++)
-      if (jobs_table_->item(jobs_table_->rowCount() - 1, j)->text().isEmpty()) {
+      if ((MSJobColumn)j != MSJobColumn::CONDITION && jobs_table_->item(jobs_table_->rowCount() - 1, j)->text().isEmpty()) {
         had_incomplete_job = true;
         break;
       }
@@ -498,6 +501,7 @@ void MoistureSensorPanel::refreshJobs() {
     jobs_table_->setItem(i, (int)MSJobColumn::MEASUREMENT_DURATION, new QTableWidgetItem(QString::number(ms_job.measurement_duration)));
     jobs_table_->setItem(i, (int)MSJobColumn::TERMINATION_CONDITION, new QTableWidgetItem(QString::fromStdString(ms_job.termination_condition)));
     jobs_table_->setItem(i, (int)MSJobColumn::SCHEDULE, new QTableWidgetItem(QString::fromStdString(job.crontab_schedule)));
+    jobs_table_->setItem(i, (int)MSJobColumn::CONDITION, new QTableWidgetItem(QString::fromStdString(job.condition)));
   }
 
   if (prev_selected_row >= 0)
@@ -514,7 +518,7 @@ void MoistureSensorPanel::onJobSelected(int row, int column) {
 
 bool MoistureSensorPanel::isJobCellValid(int row, int column, std::string *error_msg) {
   std::string text = jobs_table_->item(row, column)->text().toStdString();
-  if (text.empty())
+  if (text.empty() && (MSJobColumn)column != MSJobColumn::CONDITION)
     return false;
   switch ((MSJobColumn)column) {
     case MSJobColumn::DEVICE:
@@ -582,7 +586,7 @@ void MoistureSensorPanel::onJobEdited(int row, int column) {
 
   bool is_complete_row = true;
   for (int i = 0; i < jobs_table_->columnCount(); i++)
-    if (!jobs_table_->item(row, i) || jobs_table_->item(row, i)->text().isEmpty()) {
+    if (!jobs_table_->item(row, i) || ((MSJobColumn)column != MSJobColumn::CONDITION && jobs_table_->item(row, i)->text().isEmpty())) {
       is_complete_row = false;
       break;
     }
@@ -607,14 +611,14 @@ void MoistureSensorPanel::onJobEdited(int row, int column) {
     jobs_table_->setItem(row, column, new QTableWidgetItem(current_cell_text_));
     return;
   }
-  status_label_->setText("Job " + QString::fromStdString(request->job.name) + " edited");
+  status_label_->setText("Job " + QString::fromStdString(request->job.name) + " edited: " + QString::fromStdString(response->message));
   updateButtonsAvailability();
 }
 
 void MoistureSensorPanel::onJobDelete(int row, int /*column*/) {
   bool deleting_complete_row = true;
   for (int i = 0; i < jobs_table_->columnCount(); i++)
-    if (jobs_table_->item(row, i)->text().isEmpty()) {
+    if ((MSJobColumn)i != MSJobColumn::CONDITION && jobs_table_->item(row, i)->text().isEmpty()) {
       deleting_complete_row = false;
       break;
     }

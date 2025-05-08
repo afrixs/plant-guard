@@ -28,6 +28,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/EditJob.srv"
   "srv/GetDeviceList.srv"
   "srv/GetJobList.srv"
+  "srv/GetState.srv"
   DEPENDENCIES ${dependencies}
 )
 

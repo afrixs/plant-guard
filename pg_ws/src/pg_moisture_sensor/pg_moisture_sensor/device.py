@@ -1,8 +1,9 @@
-from pg_job_management.jobs_common import DeviceInterface as DeviceInterfaceBase
+from pg_job_management.jobs_common import DeviceInterface as DeviceInterfaceBase, OverallState
 from rclpy.serialization import deserialize_message, serialize_message
-from pg_moisture_sensor_msgs.msg import Job, Config, Sensor
+from pg_moisture_sensor_msgs.msg import Job, Config, Sensor, ConfigStamped
+from pg_msgs.msg import Float64ArrayStamped
 from rclpy.node import Node
-from rclpy.qos import QoSProfile, DurabilityPolicy
+from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
 
 class DeviceInterface(DeviceInterfaceBase):
   def __init__(self):
@@ -22,7 +23,7 @@ class DeviceInterface(DeviceInterfaceBase):
   def start_device(self, device_name: str, config_dict: dict, node: Node) -> bool:
     self.config_dict = config_dict
     self.device_name = device_name
-    self.startup_process, self.output_redir = self.run_remote_process(
+    self.startup_process, self.output_redir = self.run_external_process(
       device_name, 'r2pg && ros2 run pg_moisture_sensor moisture_sensor --ros-args -r __ns:=/' + device_name)
     self.config_pub = node.create_publisher(Config, device_name + '/config', QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL))
     self.update_config(self.config_dict)
@@ -63,5 +64,33 @@ class DeviceInterface(DeviceInterfaceBase):
     job_config_msg.termination_condition = job_config_dict['termination_condition']
     return serialize_message(job_config_msg)
 
-  def create_job_command(self, job_name: str) -> str:
+  def create_job_command(self, job_name: str, job_config_dict: dict) -> str | None:
     return None  # measurement job not implemented yet
+
+  def start_updating_state(self, device_name: str, config_dict: dict, node: Node, state: OverallState):
+    super().start_updating_state(device_name, config_dict, node, state)
+    self.config_sub = node.create_subscription(ConfigStamped, device_name + '/config_stamped', self.config_callback, QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL))
+    self.data_sub = node.create_subscription(Float64ArrayStamped, device_name + '/moistures', self.moistures_callback, QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT))
+
+  def stop_updating_state(self):
+    self.config_sub.destroy()
+    self.data_sub.destroy()
+
+  def config_callback(self, config: ConfigStamped):
+    self.config_callback_general(config, self.update_moistures)
+
+  def moistures_callback(self, msg: Float64ArrayStamped):
+    self.measurement_callback_general(msg, self.update_moistures)
+
+  def update_moistures(self):
+    config = self.active_config
+    moistures = self.last_measurement.data
+    moisture_i = 0
+    with self.state as state:
+      for sensor in config.config.sensors:
+        if sensor.measure_name:
+          if (moisture_i >= len(moistures)):
+            self.logger.error(f"Moisture sensor {sensor.measure_name} not found ({self.device_name} is configured only for {len(moistures)} sensors)", throttle_duration_sec=3)
+            break
+          state.setdefault('plants', {}).setdefault(sensor.measure_name, {})['moisture'] = moistures[moisture_i]
+          moisture_i += 1

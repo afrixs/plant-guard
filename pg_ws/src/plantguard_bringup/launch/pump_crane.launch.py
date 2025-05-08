@@ -24,6 +24,10 @@ def generate_launch_description():
         '^rq/play_bag/_action/cancel_goalRequest$|^rr/play_bag/_action/cancel_goalReply$|'
         '^rq/play_bag/_action/get_resultRequest$|^rr/play_bag/_action/get_resultReply$|'
         '^rq/play_bag/_action/send_goalRequest$|^rr/play_bag/_action/send_goalReply$|'
+        '^rt/record_bag/_action/feedback$|^rt/record_bag/_action/status$|'
+        '^rq/record_bag/_action/cancel_goalRequest$|^rr/record_bag/_action/cancel_goalReply$|'
+        '^rq/record_bag/_action/get_resultRequest$|^rr/record_bag/_action/get_resultReply$|'
+        '^rq/record_bag/_action/send_goalRequest$|^rr/record_bag/_action/send_goalReply$|'
         '^$'
     )
     streamed_topics = PythonExpression(['"', streamed_topics_0_7_2, '" if "', zenoh_version, '" == "0.7.2" else "',
@@ -85,6 +89,13 @@ def generate_launch_description():
             package='pg_job_management',
             executable='job_server',
             name='job_server',
+            output='screen',
+        ),
+
+        Node(
+            package='pg_state_management',
+            executable='state_server',
+            name='state_server',
             output='screen',
         ),
 

@@ -64,7 +64,7 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     # && MAKEFLAGS=-j1 colcon build --symlink-install --parallel-workers 1
     && colcon build --symlink-install  # can be used instead in case the RPi has proper cooling maybe...
 
-RUN pip3 install python-crontab
+RUN pip3 install python-crontab dotmap
 RUN echo 'alias r2pg="source /pg_ws/install/setup.bash"' >> ~/.bashrc
 # zenoh 0.7.2
 #RUN echo "export CYCLONEDDS_URI='<CycloneDDS><Domain><General><Interfaces><NetworkInterface name="lo"/></Interfaces><AllowMulticast>true</AllowMulticast></General><Discovery><ParticipantIndex>none</ParticipantIndex></Discovery></Domain></CycloneDDS>' >> ~/.bashrc

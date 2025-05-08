@@ -1,6 +1,10 @@
 import rclpy
 from rclpy.node import Node
-from pg_msgs.srv import EditJob, GetJobList, EditDevice, GetDeviceList
+from sympy.strategies.branch import condition
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+
+from pg_msgs.srv import EditJob, GetJobList, EditDevice, GetDeviceList, GetState
 from pg_msgs.msg import Job, Device
 
 from crontab import CronTab, CronSlices
@@ -37,6 +41,9 @@ class JobServer(Node):
         rclpy.shutdown()
         return
       self.device_interfaces[device] = interface
+
+    self.sync_service_callback_group = MutuallyExclusiveCallbackGroup()
+    self.get_state_client = self.create_client(GetState, '/get_state', callback_group=self.sync_service_callback_group)
 
     self.get_job_list_service = self.create_service(GetJobList, 'get_job_list', self.get_job_list_callback)
     self.edit_job_service = self.create_service(EditJob, 'edit_job', self.edit_job_callback)
@@ -76,6 +83,7 @@ class JobServer(Node):
     if jobs_data is None:
       jobs_data = {}
 
+    message_suffix = ""
     if request.operation == EditJob.Request.ADD or request.operation == EditJob.Request.MODIFY or request.operation == EditJob.Request.ADD_OR_MODIFY:
       if not CronSlices.is_valid(request.job.crontab_schedule):
         response.message = "invalid schedule"
@@ -110,12 +118,26 @@ class JobServer(Node):
       if job_data is None:
         response.message = "device does not support jobs or job config not valid"
         return response
+      if request.job.condition:
+        job_data['__condition'] = request.job.condition
       jobs_data[request.job.device.name][request.job.name] = job_data
       try:
-        job_command = self.create_job_command(request.job.name, interface)
+        job_command = self.create_job_command(request.job.name, job_data, interface)
       except JobServerException as e:
         response.message = str(e)
         return response
+
+      if request.job.condition:
+        if self.get_state_client.wait_for_service(timeout_sec=3.0):
+          client_request = GetState.Request()
+          client_request.expression = request.job.condition
+          state_result: GetState.Response = self.get_state_client.call(client_request)
+          if state_result is not None and not state_result.error_message:
+            message_suffix = ' Job condition currently returns: ' + state_result.state
+          else:
+            message_suffix = ' Job condition check failed: ' + (state_result.error_message if state_result else 'NO_RESPONSE')
+        else:
+            message_suffix = ' Job condition check failed: service not available'
 
       job = cron.new(command=job_command, comment=JOB_CRON_PREFIX + request.job.device.name + "." + request.job.name)
       job.setall(CronSlices(request.job.crontab_schedule))
@@ -136,7 +158,7 @@ class JobServer(Node):
     with open(JOBS_YAML_PATH, 'w') as file:
       yaml.dump(jobs_data, file)
     response.success = True
-    response.message = "job updated"
+    response.message = "Job updated." + message_suffix
     return response
 
   def get_job_list_callback(self, request: GetJobList.Request, response: GetJobList.Response):
@@ -174,6 +196,7 @@ class JobServer(Node):
         job_msg.device.type = device_type
         job_msg.name = name
         job_msg.crontab_schedule = job.slices.render()
+        job_msg.condition = job_data.get('__condition', '')
 
         job_msg.config_msg_data = interface.create_job_config_msg_data(job_data)
         response.jobs.append(job_msg)
@@ -186,7 +209,7 @@ class JobServer(Node):
     if re.fullmatch(ALLOWED_NAMING_PATTERN, request.device.name) is None:
       response.message = "requested device name not matching pattern " + ALLOWED_NAMING_PATTERN
       return response
-    if request.operation != EditJob.Request.MODIFY and request.operation != EditJob.Request.ADD_OR_MODIFY and request.name_before_renaming:
+    if request.operation != EditDevice.Request.MODIFY and request.operation != EditDevice.Request.ADD_OR_MODIFY and request.name_before_renaming:
       response.message = "name_before_renaming should be empty for this operation (used only for renaming)"
       return response
     if request.name_before_renaming and re.fullmatch(ALLOWED_NAMING_PATTERN, request.name_before_renaming) is None:
@@ -203,6 +226,7 @@ class JobServer(Node):
     if jobs_data is None:
       jobs_data = {}
 
+    message_suffix = ""
     if request.operation == EditDevice.Request.ADD or request.operation == EditDevice.Request.MODIFY or request.operation == EditDevice.Request.ADD_OR_MODIFY:
       if request.name_before_renaming in jobs_data and request.device.type != jobs_data[request.name_before_renaming]["__type"]:
         response.message = ("device type mismatch (" + request.device.type + " != " + jobs_data[request.name_before_renaming]["__type"] +
@@ -233,8 +257,9 @@ class JobServer(Node):
         for job in cron.find_comment(re.compile("^" + JOB_CRON_PREFIX.replace(".", "\\.") + request.name_before_renaming + "\\.")):
           job.set_comment(job.comment.replace("." + request.name_before_renaming + ".", "." + request.device.name + ".", 1))
           job_name = job.comment[job.comment.find("." + request.device.name + ".") + len(request.device.name) + 2:]
+          job_data = jobs_data[request.device.name].get(job_name, {})
           try:
-            job.set_command(self.create_job_command(job_name, interface))
+            job.set_command(self.create_job_command(job_name, job_data, interface))
           except JobServerException as e:
             response.message = str(e)
             return response
@@ -282,7 +307,7 @@ class JobServer(Node):
     with open(JOBS_YAML_PATH, 'w') as file:
       yaml.dump(jobs_data, file)
     response.success = True
-    response.message = "device updated"
+    response.message = "device updated" + message_suffix
     return response
 
   def get_device_list_callback(self, request: GetDeviceList.Request, response: GetDeviceList.Response):
@@ -317,21 +342,33 @@ class JobServer(Node):
 
     return response
 
-  def create_job_command(self, job_name: str, interface: DeviceInterface) -> str:
-    job_command_pure = interface.create_job_command(job_name)
+  def create_job_command(self, job_name: str, job_data: dict, interface: DeviceInterface) -> str:
+    job_command_pure = interface.create_job_command(job_name, job_data)
     if job_command_pure is None:
       raise JobServerException("device does not support job scheduling")
     if re.search(JOB_COMMAND_FORBIDDEN_SEQUENCE, job_command_pure):
       raise JobServerException("job command contains forbidden sequence " + JOB_COMMAND_FORBIDDEN_SEQUENCE)
-    return 'bash -i -c "'+ job_command_pure + '" 2>>~/plant_guard/err.log 1>>~/plant_guard/out.log'
+    condition_cmd = ''
+    condition: str | None = job_data.get('__condition', None)
+    if condition:
+      condition_rosparametrized = re.sub(r'\\\\', '\\\\x5C', condition)
+      condition_rosparametrized = re.sub(r'(["\'])', '\\\\$1', condition_rosparametrized)
+      condition_cmd = 'r2pg && ros2 run pg_state_management state_client --ros-args -p expression:=$\'' + condition_rosparametrized + '\' && '
+
+    return 'bash -i -c "' + condition_cmd + job_command_pure + '" 2>>~/plant_guard/err.log 1>>~/plant_guard/out.log'
 
 def main(args=None):
   rclpy.init(args=args)
   node = JobServer()
+  if not rclpy.ok():
+    node.destroy_node()
+    return
+  executor = MultiThreadedExecutor(2)
+  executor.add_node(node)
   try:
-    rclpy.spin(node)
+    executor.spin()
   except KeyboardInterrupt:
-    pass
+    node.get_logger().info('Keyboard interrupt, shutting down.\n')
   finally:
     node.destroy_node()
     os.system("screen -ls | grep '(Detached)' | awk '{ print $1 }' |  xargs -i@ screen -S @ -X quit")  # remove clutter that possibly remained in case of errors
