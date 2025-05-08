@@ -1,6 +1,5 @@
 import rclpy
 from rclpy.node import Node
-from sympy.strategies.branch import condition
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 
