@@ -1,7 +1,7 @@
 bagtube_server:
   ros__parameters:
     max_total_size_gb: 0.0  # no limit
-    initial_wait_for_publishers_timeout: 10.0
+    initial_wait_for_publishers_timeout: 30.0
     toggle_input_nodes_running_services: [set_capture]  # , image_raw/enable_encoder]
     pipes: [image_raw, pump_crane_angle, pump_crane_pump, moisture_sensor_moistures, moisture_sensor_config_stamped]
     image_raw:
